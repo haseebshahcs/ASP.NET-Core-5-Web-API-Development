@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.IRepository;
 using HotelListing.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -42,6 +43,7 @@ namespace HotelListing.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [Authorize]
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetHotel(int id)
         {

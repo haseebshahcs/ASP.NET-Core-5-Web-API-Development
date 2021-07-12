@@ -2,6 +2,7 @@ using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.IRepository;
 using HotelListing.Repository;
+using HotelListing.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,6 +37,11 @@ namespace HotelListing
                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection"));
             });
 
+            services.AddAuthentication();
+            services.ConfigureIdentity(); //custom extension method in ServiceExtentions class
+
+            services.ConfigureJwt(Configuration); //custom extension method in ServiceExtentions class
+
             //CORS - cross origin resource sharing - used to allow to disallow api access (e.g. in company to thirdparty)
             services.AddCors(o =>
             {
@@ -49,6 +55,8 @@ namespace HotelListing
             //AddScoped means a new instance is created for a period or lifetime of a certain set of requests
             //AddSingleton means only 1 instance will exists for entire duration of the application
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IAuthManager, AuthManager>();
 
             services.AddSwaggerGen(c =>
             {
@@ -74,6 +82,7 @@ namespace HotelListing
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
